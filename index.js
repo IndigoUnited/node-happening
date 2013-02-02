@@ -27,42 +27,42 @@ var Happening = function (opt) {
     this._subChannels = {};
 
 // TODO: remove the debug below
-var one = this._one;
-one.on('join', function (cluster) {
-    console.log('joined cluster:', cluster);
-});
+// var one = this._one;
+// one.on('join', function (cluster) {
+//     console.log('joined cluster:', cluster);
+// });
 
-one.on('leave', function (cluster) {
-    console.log('left cluster:', cluster);
-});
+// one.on('leave', function (cluster) {
+//     console.log('left cluster:', cluster);
+// });
 
-one.on('advertise_start', function (adInfo) {
-    console.log('started advertising:', inspect(adInfo));
-});
+// one.on('advertise_start', function (adInfo) {
+//     console.log('started advertising:', inspect(adInfo));
+// });
 
-one.on('advertise_stop', function (adInfo) {
-    console.log('stopped advertising:', inspect(adInfo));
-});
+// one.on('advertise_stop', function (adInfo) {
+//     console.log('stopped advertising:', inspect(adInfo));
+// });
 
-one.on('subscribe', function (channel) {
-    console.log('subscribed:', channel);
-});
+// one.on('subscribe', function (channel) {
+//     console.log('subscribed:', channel);
+// });
 
-one.on('unsubscribe', function (channel) {
-    console.log('unsubscribed:', channel);
-});
+// one.on('unsubscribe', function (channel) {
+//     console.log('unsubscribed:', channel);
+// });
 
-one.on('node_up', function (node) {
-    console.log('node up:', inspect(node));
-});
+// one.on('node_up', function (node) {
+//     console.log('node up:', inspect(node));
+// });
 
-one.on('node_down', function (node) {
-    console.log('node down:', inspect(node));
-});
+// one.on('node_down', function (node) {
+//     console.log('node down:', inspect(node));
+// });
 
-one.on('message', function (chan, payload) {
-    console.log('msg:', chan + ':', payload);
-});
+// one.on('message', function (chan, payload) {
+//     console.log('msg:', chan + ':', payload);
+// });
 
     this._emitter = new EventEmitter();
 

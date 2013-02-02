@@ -117,9 +117,8 @@ Happening.prototype.stop = function (cb) {
 
 // ------------------------- EventEmitter methods ------------------------------
 
-Happening.prototype.addListener = Happening.prototype.on = function () {
+Happening.prototype.addListener = Happening.prototype.on = function (eventType) {
     var emitter   = this._emitter;
-    var eventType = arguments[0];
 
     this._one.subscribe(eventType);
     this._subChannels[eventType] = null; // mark channel as subscribed
@@ -128,14 +127,19 @@ Happening.prototype.addListener = Happening.prototype.on = function () {
 };
 
 Happening.prototype.once = function () {
-    // TODO: handle the once in terms of cluster
+    var emitter   = this._emitter;
+    var one       = this._one;
+    
+    one.on('message', function (chan, payload) {
+        // TODO:
+    });
 
-    this._emitter.once.apply(this._emitter, arguments);
+
+    emitter.once.apply(emitter, arguments);
 };
 
-Happening.prototype.removeListener = function () {
+Happening.prototype.removeListener = function (eventType) {
     var emitter = this._emitter;
-    var eventType = arguments[0];
 
     var result  = emitter.removeListener.apply(emitter, arguments);
 

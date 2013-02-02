@@ -141,53 +141,50 @@ Happening.prototype.stop = function (cb) {
 
 // ------------------------- EventEmitter methods ------------------------------
 
-Happening.prototype.addListener = Happening.prototype.on = function (eventType) {
-    var emitter   = this._emitter;
+Happening.prototype.addListener = Happening.prototype.on = function (event, listener) {
+    this._one.subscribe(event);
+    this._subChannels[event] = null; // mark channel as subscribed
 
-    this._one.subscribe(eventType);
-    this._subChannels[eventType] = null; // mark channel as subscribed
-
-    return emitter.on.apply(emitter, arguments);
+    return this._emitter.on(event, listener);
 };
 
-Happening.prototype.once = function (eventType, callback) {
+Happening.prototype.once = function (event, listener) {
     var emitter   = this._emitter;
     var one       = this._one;
     
     var tmp = function () {
         // if this is the last listener for this event type
-        if (emitter.listeners(eventType).length === 0) {
+        if (emitter.listeners(event).length === 0) {
             // unsubscribe channel
-            one.unsubscribe(eventType);
+            one.unsubscribe(event);
         }
 
         // callback
-        callback.apply(callback, arguments);
+        listener.apply(listener, arguments);
     };
 
 
-    emitter.once(eventType, tmp);
+    emitter.once(event, tmp);
 };
 
-Happening.prototype.removeListener = function (eventType) {
+Happening.prototype.removeListener = function (event, listener) {
     var emitter = this._emitter;
 
-    var result  = emitter.removeListener.apply(emitter, arguments);
+    var result  = emitter.removeListener(event, listener);
 
     // if there are no more listeners for the event type
     if (!emitter.listeners().length) {
         // unsubscribe event type channel
-        this._one.unsubscribe(eventType);
+        this._one.unsubscribe(event);
 
         // mark channel as unsubscribed
-        delete this._subChannels[eventType];
+        delete this._subChannels[event];
     }
 
     return result;
 };
 
-Happening.prototype.removeAllListeners = function () {
-    var emitter     = this._emitter;
+Happening.prototype.removeAllListeners = function (event) {
     var subChannels = this._subChannels;
     var one         = this._one;
 
@@ -197,26 +194,21 @@ Happening.prototype.removeAllListeners = function () {
     }
     this._subChannels = {};
 
-    return emitter.removeAllListeners.apply(emitter, arguments);
+    return this._emitter.removeAllListeners(event);
 };
 
-Happening.prototype.setMaxListeners = function () {
-    var emitter = this._emitter;
-
-    // TODO: consider the max listeners in the add/on methods
-    return emitter.setMaxListeners.apply(emitter, arguments);
+Happening.prototype.setMaxListeners = function (n) {
+    return this._emitter.setMaxListeners(n);
 };
 
-Happening.prototype.listeners = function () {
-    var emitter = this._emitter;
-
-    return emitter.listeners.apply(emitter, arguments);
+Happening.prototype.listeners = function (event) {
+    return this._emitter.listeners(event);
 };
 
-Happening.prototype.emit = function () {
+Happening.prototype.emit = function (event) {
     return this._one.publish(
         // event type used as channel
-        arguments[0],
+        event,
         // callback arguments sent in the message
         JSON.stringify(Array.prototype.slice.apply(arguments, [1]))
     );

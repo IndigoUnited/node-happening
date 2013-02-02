@@ -19,7 +19,7 @@ var Happening = function (opt) {
 
     // setup cluster
     var oneOpt = {
-        cluster: opt.id ? opt.id : uuid.v4(),
+        cluster: opt.id ? opt.id : 'default',
         service: 'happening'
     };
     this._one         = new One(oneOpt);

@@ -15,7 +15,7 @@ Note that `happening` depends on [One](http://github.com/IndigoUnited/node-1), a
 
 You can use `happening` just like you would with any other event emitter. Here's a quick example:
 
-```
+```js
 var Happening = require('happening');
 
 happening = Happening.create(function (err) {

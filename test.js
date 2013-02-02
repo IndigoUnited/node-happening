@@ -11,7 +11,6 @@ var happening = Happening.create(function (err) {
 
     happening.on('my_event', function (param1, param2) {
         console.log('my event got called with', param1, 'and', param2);
-        process.exit();
     });
 
     var i = 0;

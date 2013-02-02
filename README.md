@@ -32,3 +32,11 @@ happening = Happening.create(function (err) {
     }, 500);
 });
 ```
+
+## Considerations
+
+Here's a list of things you should keep in mind while using `happening`.
+
+1. If you add `once()` listeners on two separate nodes of the emitter, both will run once. Remember that in practice, you ran `once()` twice.
+2. `happening` takes a few milliseconds to get up an running, which is why you have a factory method, `create()`, which will only call back once emitter has connected to at least one other node.
+3. If you have multiple nodes, it can take a few more milliseconds for an emitter that has just joined 

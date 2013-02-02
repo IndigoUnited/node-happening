@@ -17,9 +17,18 @@ function inspect(obj, depth, multiLine) {
 var Happening = function (opt) {
     opt = opt || {};
 
+    // the id allows the user to separate emitters on the same network,
+    // effectively namespacing them
+    this._id = opt.id ? opt.id : 'default';
+
+    // this threshold specifies how many nodes the emitter will need to find
+    // before it invokes the callback that informs the user that the emitter
+    // is ready
+    this._readyThreshold = opt.readyThreshold || 1;
+
     // setup cluster
     var oneOpt = {
-        cluster: opt.id ? opt.id : 'default',
+        cluster: this._id,
         service: 'happening'
     };
     this._one         = new One(oneOpt);
@@ -96,9 +105,24 @@ Happening.prototype.start = function (cb) {
                 emitter.emit.apply(emitter, args);
             });
 
-            // mark emitter as running
-            that._running = true;
-            cb();
+            // wait for at least 1 node to join the cluster until the emitter is
+            // considered ready
+            one.on('node_up', function () {
+                // check how many nodes have been found in the cluster
+                var id, count = 0;
+                for (id in one.getClusterTopology()) {
+                    count++;
+                }
+
+                // if there are enough nodes
+                if (count >= that._readyThreshold) {
+                    // mark emitter as running
+                    that._running = true;
+
+                    // event emitter ready!
+                    cb();
+                }
+            });
         });
     });
 };
@@ -126,16 +150,23 @@ Happening.prototype.addListener = Happening.prototype.on = function (eventType) 
     return emitter.on.apply(emitter, arguments);
 };
 
-Happening.prototype.once = function () {
+Happening.prototype.once = function (eventType, callback) {
     var emitter   = this._emitter;
     var one       = this._one;
     
-    one.on('message', function (chan, payload) {
-        // TODO:
-    });
+    var tmp = function () {
+        // if this is the last listener for this event type
+        if (emitter.listeners(eventType).length === 0) {
+            // unsubscribe channel
+            one.unsubscribe(eventType);
+        }
+
+        // callback
+        callback.apply(callback, arguments);
+    };
 
 
-    emitter.once.apply(emitter, arguments);
+    emitter.once(eventType, tmp);
 };
 
 Happening.prototype.removeListener = function (eventType) {

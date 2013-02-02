@@ -1,0 +1,27 @@
+{
+  "name": "happening",
+  "version": "0.0.0",
+  "description": "Distributed network-based event emitter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "keywords": [
+    "event",
+    "emitter",
+    "distributed",
+    "zmq",
+    "zeromq",
+    "0mq",
+    "eventemitter",
+    "event-emitter",
+    "cluster"
+  ],
+  "author": "Indigo United",
+  "license": "MIT",
+  "dependencies": {
+    "1": "0.0.2",
+    "node-uuid": "~1.4.0"
+  }
+}

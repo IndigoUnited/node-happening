@@ -4,6 +4,16 @@ var One          = require('1');
 var EventEmitter = require('events').EventEmitter;
 var uuid         = require('node-uuid');
 
+function inspect(obj, depth, multiLine) {
+    var res = require('util').inspect(obj, false, depth || 10, true);
+
+    if (!multiLine) {
+        res = res.replace(/(\r\n|\n|\r)/gm, ' ');
+    }
+
+    return res.replace(/\s+/g, ' ');
+}
+
 var Happening = function (opt) {
     opt = opt || {};
 
@@ -15,6 +25,44 @@ var Happening = function (opt) {
     this._one         = new One(oneOpt);
     // obj below holds a list with all the channels that are subscribed
     this._subChannels = {};
+
+// TODO: remove the debug below
+var one = this._one;
+one.on('join', function (cluster) {
+    console.log('joined cluster:', cluster);
+});
+
+one.on('leave', function (cluster) {
+    console.log('left cluster:', cluster);
+});
+
+one.on('advertise_start', function (adInfo) {
+    console.log('started advertising:', inspect(adInfo));
+});
+
+one.on('advertise_stop', function (adInfo) {
+    console.log('stopped advertising:', inspect(adInfo));
+});
+
+one.on('subscribe', function (channel) {
+    console.log('subscribed:', channel);
+});
+
+one.on('unsubscribe', function (channel) {
+    console.log('unsubscribed:', channel);
+});
+
+one.on('node_up', function (node) {
+    console.log('node up:', inspect(node));
+});
+
+one.on('node_down', function (node) {
+    console.log('node down:', inspect(node));
+});
+
+one.on('message', function (chan, payload) {
+    console.log('msg:', chan + ':', payload);
+});
 
     this._emitter = new EventEmitter();
 
@@ -41,10 +89,11 @@ Happening.prototype.start = function (cb) {
 
             // listen to messages coming from cluster, and treat them as events
             one.on('message', function (chan, msg) {
- console.log('got', msg, 'on', chan);
                 var emitter = that._emitter;
                 // chan is the event type, and the msg is the callback params
-                emitter.emit.apply(chan, JSON.parse(msg));
+                var args = JSON.parse(msg);
+                args.unshift(chan);
+                emitter.emit.apply(emitter, args);
             });
 
             // mark emitter as running
@@ -134,7 +183,7 @@ Happening.prototype.emit = function () {
         // event type used as channel
         arguments[0],
         // callback arguments sent in the message
-        JSON.stringify([Array.prototype.slice.apply(arguments, [1])])
+        JSON.stringify(Array.prototype.slice.apply(arguments, [1]))
     );
 };
 

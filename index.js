@@ -17,9 +17,9 @@ function inspect(obj, depth, multiLine) {
 var Happening = function (opt) {
     opt = opt || {};
 
-    // the id allows the user to separate emitters on the same network,
+    // the namespace allows the user to separate emitters on the same network,
     // effectively namespacing them
-    this._id = opt.id ? opt.id : 'default';
+    this._namespace = opt.namespace ? opt.namespace : 'default';
 
     // this threshold specifies how many nodes the emitter will need to find
     // before it invokes the callback that informs the user that the emitter
@@ -28,7 +28,7 @@ var Happening = function (opt) {
 
     // setup cluster
     var oneOpt = {
-        cluster: this._id,
+        cluster: this._namespace,
         service: 'happening'
     };
     this._one         = new One(oneOpt);

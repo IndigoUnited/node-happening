@@ -37,6 +37,44 @@ happening = Happening.create(function (err) {
 
 Here's a list of things you should keep in mind while using `happening`.
 
-1. If you add `once()` listeners on two separate nodes of the emitter, both will run once. Remember that in practice, you ran `once()` twice.
-2. `happening` takes a few milliseconds to get up an running, which is why you have a factory method, `create()`, which will only call back once emitter has connected to at least one other node.
-3. If you have multiple nodes, it can take a few more milliseconds for an emitter that has just joined 
+1. Any emitter you create will join other emitters on the same network automatically, and act as one logical emitter. If you need multiple logical emitters, you can specify a `namespace` option:
+
+```js
+var Happening = require('happening');
+
+happening = Happening.create({
+        namespace: 'my_own_namespace'
+    }, function (err) {
+    if (err) {
+        throw err;
+    }
+    
+    happening.on('my_event', function (param1, param2) {
+        console.log('got called with', param1, 'and', param2);
+    });
+    
+    setInterval(function () {
+        happening.emit('my_event', 'this', 'that');
+    }, 500);
+});
+```
+
+This emitter will only join other emitters that belong to the same `namespace`.
+
+2. If you add `once()` listeners on two separate nodes of the emitter, both will run once. Remember that in practice, you ran `once()` twice.
+
+3. `happening` takes a few milliseconds to get up an running, which is why you have asynchronous `create()`, which will only call back once emitter has connected to at least one other node. If you want to raise the number of nodes it should wait for, you can pass a `readyThreshold` option, like so:
+
+```js
+var Happening = require('happening');
+
+happening = Happening.create({
+        readyThreshold: 3
+    }, function (err) {
+    if (err) {
+        throw err;
+    }
+    
+    console.log('found at least 3 nodes!');
+});
+```

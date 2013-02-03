@@ -36,42 +36,42 @@ function Happening(opt) {
     this._subChannels = {};
 
 // TODO: remove the debug below
-var one = this._one;
-one.on('join', function (cluster) {
-    console.log('joined cluster:', cluster);
-});
+// var one = this._one;
+// one.on('join', function (cluster) {
+//     console.log('joined cluster:', cluster);
+// });
 
-one.on('leave', function (cluster) {
-    console.log('left cluster:', cluster);
-});
+// one.on('leave', function (cluster) {
+//     console.log('left cluster:', cluster);
+// });
 
-one.on('advertise_start', function (adInfo) {
-    console.log('started advertising:', inspect(adInfo));
-});
+// one.on('advertise_start', function (adInfo) {
+//     console.log('started advertising:', inspect(adInfo));
+// });
 
-one.on('advertise_stop', function (adInfo) {
-    console.log('stopped advertising:', inspect(adInfo));
-});
+// one.on('advertise_stop', function (adInfo) {
+//     console.log('stopped advertising:', inspect(adInfo));
+// });
 
-one.on('subscribe', function (channel) {
-    console.log('subscribed:', channel);
-});
+// one.on('subscribe', function (channel) {
+//     console.log('subscribed:', channel);
+// });
 
-one.on('unsubscribe', function (channel) {
-    console.log('unsubscribed:', channel);
-});
+// one.on('unsubscribe', function (channel) {
+//     console.log('unsubscribed:', channel);
+// });
 
-one.on('node_up', function (node) {
-    console.log('node up:', inspect(node));
-});
+// one.on('node_up', function (node) {
+//     console.log('node up:', inspect(node));
+// });
 
-one.on('node_down', function (node) {
-    console.log('node down:', inspect(node));
-});
+// one.on('node_down', function (node) {
+//     console.log('node down:', inspect(node));
+// });
 
- one.on('message', function (chan, payload) {
-     console.log('msg:', chan + ':', payload);
- });
+//  one.on('message', function (chan, payload) {
+//      console.log('msg:', chan + ':', payload);
+//  });
 
     this._emitter = new EventEmitter();
 
@@ -80,27 +80,29 @@ one.on('node_down', function (node) {
 }
 
 Happening.create = function (opt, cb) {
-        // fix parameter order
-        if (typeof opt === 'function') {
-            cb = opt;
+console.log('creating new instance', opt);
+    // fix parameter order
+    if (typeof opt === 'function') {
+        cb = opt;
 
-            opt = {};
+        opt = {};
+    }
+
+    // create new emitter
+    var happening = new Happening(opt);
+
+    // start the emitter
+    happening.start(function (err) {
+console.log('started emitter', opt);
+        if (err) {
+            return cb('Error creating Happening emitter: ' + err);
         }
 
-        // create new emitter
-        var happening = new Happening(opt);
+        cb(null, happening);
+    });
 
-        // start the emitter
-        happening.start(function (err) {
-            if (err) {
-                return cb('Error creating Happening emitter: ' + err);
-            }
-
-            cb(null, happening);
-        });
-
-        return happening;
-    }
+    return happening;
+};
 
 Happening.prototype.start = function (cb) {
     var one = this._one;
@@ -131,15 +133,23 @@ Happening.prototype.start = function (cb) {
 
             // wait for at least 1 node to join the cluster until the emitter is
             // considered ready
-            var waitUntilThreshold = function () {
+            var waitUntilThreshold = function (nodeInfo) {
                 // check how many nodes have been found in the cluster
-                var id, count = 0;
+                var id,
+                    count = 0,
+                    selfFound = false;
                 for (id in one.getClusterTopology()) {
                     count++;
                 }
 
+                // if found himself, mark the flag
+                if (nodeInfo.id === one.getId()) {
+                    selfFound = true;
+                }
+
                 // if there are enough nodes
-                if (count >= that._readyThreshold) {
+                if (selfFound && count >= that._readyThreshold) {
+                
                     // mark emitter as running
                     that._running = true;
 

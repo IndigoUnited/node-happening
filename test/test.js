@@ -8,6 +8,8 @@ var testEmit   = require('./testEmit');
 // the test stops
 var emitters = [];
 
+// factory method that creates emitters but keeps a list of instances, for clean
+// up
 function create() {
     var opt;
     var callback;
@@ -31,26 +33,28 @@ function create() {
     return emitter;
 }
 
+// clean up method that runs after each execution of a test case
 function cleanUp(done) {
-    var totalStopped = 0;
+    // var totalStopped = 0;
 
-    // stop each of the emitters
-    emitters.forEach(function (emitter) {
-        emitter.stop(function (err) {
-            if (err) {
-                return done(err);
-            }
+    // // stop each of the emitters
+    // emitters.forEach(function (emitter) {
+    //     emitter.stop(function (err) {
+    //         if (err) {
+    //             return done(err);
+    //         }
 
-            ++totalStopped;
+    //         ++totalStopped;
 
-            // if the last emitter was stopped
-            if (totalStopped === emitters.length) {
-                // reset list and callback
-                emitters = [];
-                done();
-            }
-        });
-    });
+    //         // if the last emitter was stopped
+    //         if (totalStopped === emitters.length) {
+    //             // reset list and callback
+    //             emitters = [];
+    //             done();
+    //         }
+    //     });
+    // });
+    done();
 }
 
 

@@ -18,7 +18,7 @@ You can use `happening` just like you would with any other event emitter. Here's
 ```js
 var Happening = require('happening');
 
-happening = Happening.create(function (err) {
+var happening = Happening.create(function (err) {
     if (err) {
         throw err;
     }
@@ -44,7 +44,7 @@ Any emitter you create will join other emitters on the same network automaticall
 ```js
 var Happening = require('happening');
 
-happening = Happening.create({
+var happening = Happening.create({
         namespace: 'my_own_namespace'
     }, function (err) {
     if (err) {
@@ -74,7 +74,7 @@ If you add `once()` listeners on two separate nodes of the emitter, both will ru
 ```js
 var Happening = require('happening');
 
-happening = Happening.create({
+var happening = Happening.create({
         readyThreshold: 3
     }, function (err) {
     if (err) {

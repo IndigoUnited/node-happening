@@ -4,9 +4,9 @@
   "description": "Distributed network-based event emitter",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
-  "repository": "",
+  "repository": "git@github.com:IndigoUnited/node-happening.git",
   "keywords": [
     "event",
     "emitter",
@@ -21,7 +21,11 @@
   "author": "Indigo United",
   "license": "MIT",
   "dependencies": {
-    "1": "0.0.2",
-    "node-uuid": "~1.4.0"
+    "1": "~0.0.2"
+  },
+  "devDependencies": {
+    "expect.js": "~0.2.0",
+    "mocha": "~1.8.1",
+    "async": "~0.1.22"
   }
 }

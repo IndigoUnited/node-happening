@@ -2,19 +2,18 @@
 
 var One          = require('1');
 var EventEmitter = require('events').EventEmitter;
-var uuid         = require('node-uuid');
 
-function inspect(obj, depth, multiLine) {
-    var res = require('util').inspect(obj, false, depth || 10, true);
+// function inspect(obj, depth, multiLine) {
+//     var res = require('util').inspect(obj, false, depth || 10, true);
 
-    if (!multiLine) {
-        res = res.replace(/(\r\n|\n|\r)/gm, ' ');
-    }
+//     if (!multiLine) {
+//         res = res.replace(/(\r\n|\n|\r)/gm, ' ');
+//     }
 
-    return res.replace(/\s+/g, ' ');
-}
+//     return res.replace(/\s+/g, ' ');
+// }
 
-var Happening = function (opt) {
+function Happening(opt) {
     opt = opt || {};
 
     // the namespace allows the user to separate emitters on the same network,
@@ -31,6 +30,7 @@ var Happening = function (opt) {
         cluster: this._namespace,
         service: 'happening'
     };
+
     this._one         = new One(oneOpt);
     // obj below holds a list with all the channels that are subscribed
     this._subChannels = {};
@@ -69,15 +69,38 @@ var Happening = function (opt) {
 //     console.log('node down:', inspect(node));
 // });
 
-// one.on('message', function (chan, payload) {
-//     console.log('msg:', chan + ':', payload);
-// });
+ // one.on('message', function (chan, payload) {
+ //     console.log('msg:', chan + ':', payload);
+ // });
 
     this._emitter = new EventEmitter();
 
     // flag that controls if the service is running
     this._running = false;
-};
+}
+
+Happening.create = function (opt, cb) {
+        // fix parameter order
+        if (typeof opt === 'function') {
+            cb = opt;
+
+            opt = {};
+        }
+
+        // create new emitter
+        var happening = new Happening(opt);
+
+        // start the emitter
+        happening.start(function (err) {
+            if (err) {
+                return cb('Error creating Happening emitter: ' + err);
+            }
+
+            cb(null, happening);
+        });
+
+        return happening;
+    }
 
 Happening.prototype.start = function (cb) {
     var one = this._one;
@@ -107,7 +130,7 @@ Happening.prototype.start = function (cb) {
 
             // wait for at least 1 node to join the cluster until the emitter is
             // considered ready
-            one.on('node_up', function () {
+            var waitUntilThreshold = function () {
                 // check how many nodes have been found in the cluster
                 var id, count = 0;
                 for (id in one.getClusterTopology()) {
@@ -119,10 +142,14 @@ Happening.prototype.start = function (cb) {
                     // mark emitter as running
                     that._running = true;
 
+                    one.removeListener('node_up', waitUntilThreshold);
+
                     // event emitter ready!
                     cb();
                 }
-            });
+            };
+
+            one.on('node_up', waitUntilThreshold);
         });
     });
 };
@@ -218,27 +245,4 @@ Happening.prototype.emit = function (event) {
 
 // -----------------------------------------------------------------------------
 
-module.exports = {
-    create: function (opt, cb) {
-        // fix parameter order
-        if (typeof opt === 'function') {
-            cb = opt;
-
-            opt = {};
-        }
-
-        // create new emitter
-        var happening = new Happening(opt);
-
-        // start the emitter
-        happening.start(function (err) {
-            if (err) {
-                return cb('Error creating Happening emitter: ' + err);
-            }
-
-            cb(null, happening);
-        });
-
-        return happening;
-    }
-};
+module.exports = Happening;

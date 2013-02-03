@@ -5,7 +5,8 @@ var Happening = require(__dirname + '/../index');
 var async     = require('async');
 
 module.exports = function (create) {
-    describe('#emit()', function () {
+    describe.only('#emit()', function () {
+        this.timeout(4000);
         it('should invoke the callback', function (done) {
             var emitter = create(function () {
                 emitter.on('foo', done);

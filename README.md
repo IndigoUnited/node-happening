@@ -3,6 +3,8 @@ happening
 
 `Distributed network-based event emitter for NodeJS`
 
+## NOTE: This is totally work in progress, and you should NOT rely on this for anything right now.
+
 ----------------------------------------------------
 
 ## Installing

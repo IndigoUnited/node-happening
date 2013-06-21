@@ -6,7 +6,10 @@
   "scripts": {
     "test": "mocha"
   },
-  "repository": "git@github.com:IndigoUnited/node-happening.git",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:IndigoUnited/node-happening.git"
+  },
   "keywords": [
     "event",
     "emitter",

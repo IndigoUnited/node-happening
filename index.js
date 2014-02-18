@@ -151,6 +151,7 @@ Happening.prototype.start = function (cb) {
                 // if there are enough nodes
                 if (selfFound && count >= that._readyThreshold) {
 //console.log('met threshold');
+
                     // mark emitter as running
                     that._running = true;
 
@@ -192,7 +193,7 @@ Happening.prototype.addListener = Happening.prototype.on = function (event, list
 Happening.prototype.once = function (event, listener) {
     var emitter   = this._emitter;
     var one       = this._one;
-    
+
     var tmp = function () {
         // if this is the last listener for this event type
         if (emitter.listeners(event).length === 0) {

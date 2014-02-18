@@ -1,15 +1,16 @@
-happening
-=========
+# happening
 
-`Distributed network-based event emitter for NodeJS`
+Distributed network-based event emitter for NodeJS.
 
-----------------------------------------------------
+**NOTE**: This is totally work in progress, and you should NOT rely on this for anything right now.
 
-## Installing
 
-Installing `happening` is as simple as running `npm install happening`.
+## Installation
+
+`$ npm install happening`
 
 Note that `happening` depends on [One](http://github.com/IndigoUnited/node-1), a distributed message queue based on [ØMQ](http://zeromq.com). So, if you're having a hard time installing, refer to its [installation instructions](https://github.com/IndigoUnited/node-1#installing).
+
 
 ## Usage
 
@@ -22,11 +23,11 @@ var happening = Happening.create(function (err) {
     if (err) {
         throw err;
     }
-    
+
     happening.on('my_event', function (param1, param2) {
         console.log('got called with', param1, 'and', param2);
     });
-    
+
     setInterval(function () {
         happening.emit('my_event', 'this', 'that');
     }, 500);
@@ -50,11 +51,11 @@ var happening = Happening.create({
     if (err) {
         throw err;
     }
-    
+
     happening.on('my_event', function (param1, param2) {
         console.log('got called with', param1, 'and', param2);
     });
-    
+
     setInterval(function () {
         happening.emit('my_event', 'this', 'that');
     }, 500);
@@ -80,7 +81,12 @@ var happening = Happening.create({
     if (err) {
         throw err;
     }
-    
+
     console.log('found at least 3 nodes!');
 });
 ```
+
+
+## License
+
+Released under the [MIT License](http://www.opensource.org/licenses/mit-license.php).

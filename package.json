@@ -4,9 +4,12 @@
   "description": "Distributed network-based event emitter",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha -R spec"
   },
-  "repository": "git@github.com:IndigoUnited/node-happening.git",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IndigoUnited/node-happening.git"
+  },
   "keywords": [
     "event",
     "emitter",
@@ -25,6 +28,7 @@
   },
   "devDependencies": {
     "expect.js": "~0.2.0",
-    "async": "~0.1.22"
+    "async": "~0.1.22",
+    "mocha": "~1.11.0"
   }
 }

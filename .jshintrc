@@ -1,8 +1,6 @@
 {
     "predef": [
-        "console",
-        "require",
-        "define"
+        "console"
     ],
 
     "node": true,

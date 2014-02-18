@@ -1,3 +1,5 @@
+/*global describe, afterEach*/
+
 'use strict';
 
 var Happening  = require(__dirname + '/../index');

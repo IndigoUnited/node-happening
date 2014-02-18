@@ -80,7 +80,6 @@ function Happening(opt) {
 }
 
 Happening.create = function (opt, cb) {
-console.log('creating new instance', opt);
     // fix parameter order
     if (typeof opt === 'function') {
         cb = opt;
@@ -93,7 +92,6 @@ console.log('creating new instance', opt);
 
     // start the emitter
     happening.start(function (err) {
-console.log('started emitter', opt);
         if (err) {
             return cb('Error creating Happening emitter: ' + err);
         }
@@ -123,7 +121,7 @@ Happening.prototype.start = function (cb) {
 
             // listen to messages coming from cluster, and treat them as events
             one.on('message', function (chan, msg) {
-//console.log('got msg on', chan, msg);
+//console.log(one.getId(), 'got msg on', chan, msg);
                 var emitter = that._emitter;
                 // chan is the event type, and the msg is the callback params
                 var args = JSON.parse(msg);
@@ -134,6 +132,7 @@ Happening.prototype.start = function (cb) {
             // wait for at least 1 node to join the cluster until the emitter is
             // considered ready
             var waitUntilThreshold = function (nodeInfo) {
+//console.log('node_up');
                 // check how many nodes have been found in the cluster
                 var id,
                     count = 0,
@@ -141,15 +140,17 @@ Happening.prototype.start = function (cb) {
                 for (id in one.getClusterTopology()) {
                     count++;
                 }
+//console.log('cluster must be of size', that._readyThreshold);
 
                 // if found himself, mark the flag
                 if (nodeInfo.id === one.getId()) {
+//console.log('found self');
                     selfFound = true;
                 }
 
                 // if there are enough nodes
                 if (selfFound && count >= that._readyThreshold) {
-                
+//console.log('met threshold');
                     // mark emitter as running
                     that._running = true;
 
@@ -160,6 +161,7 @@ Happening.prototype.start = function (cb) {
                 }
             };
 
+//console.log('waiting for self');
             one.on('node_up', waitUntilThreshold);
         });
     });

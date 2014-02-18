@@ -21,7 +21,7 @@
   "author": "Indigo United",
   "license": "MIT",
   "dependencies": {
-    "1": "~0.0.2"
+    "1": "~0.0.6"
   },
   "devDependencies": {
     "expect.js": "~0.2.0",

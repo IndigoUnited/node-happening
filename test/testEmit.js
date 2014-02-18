@@ -8,29 +8,33 @@ module.exports = function (create) {
     describe.only('#emit()', function () {
 
 
-
+//        this.timeout(5000);
 
         it('should invoke the callback', function (done) {
-            var emitter = create(function () {
+            var emitter = create({
+                namespace: Math.random().toString()
+            }, function () {
                 // add listener
-                emitter.on('foo2', function () {
+                emitter.on('foo', function () {
+
+                    expect(arguments.length).to.eql(0);
+
                     done();
                 });
 
                 // emit event
-                emitter.emit('foo2');
+                emitter.emit('foo');
             });
         });
 
 
 
         it('should pass arguments to the callbacks', function (done) {
-            var emitter = create(function () {
+            var emitter = create({
+                namespace: Math.random().toString()
+            }, function () {
                 // add listener
                 emitter.on('foo', function (a, b) {
-
-console.log('got called back with', a, b);
-
                     expect(a).to.eql('bar');
                     expect(b).to.eql('baz');
                     done();
@@ -42,7 +46,8 @@ console.log('got called back with', a, b);
         });
 
 
+        it('should invoke the callback on both listeners');
 
-
+        it('should invoke the callback of the correct event');
     });
 };

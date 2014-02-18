@@ -11,6 +11,7 @@ var emitters = [];
 // factory method that creates emitters but keeps a list of instances, for clean
 // up
 function create() {
+console.log('creating instance!');
     var opt;
     var callback;
 
@@ -23,10 +24,11 @@ function create() {
     }
 
     var emitter = Happening.create(opt, function (err) {
-        if (!err) {
-            emitters.push(emitter);
+        if (err) {
+            throw err;
         }
-
+        
+        emitters.push(emitter);
         callback(err);
     });
 
@@ -35,26 +37,26 @@ function create() {
 
 // clean up method that runs after each execution of a test case
 function cleanUp(done) {
-    // var totalStopped = 0;
+console.log('cleaning up!');
+    var totalStopped = 0;
 
-    // // stop each of the emitters
-    // emitters.forEach(function (emitter) {
-    //     emitter.stop(function (err) {
-    //         if (err) {
-    //             return done(err);
-    //         }
+    // stop each of the emitters
+    emitters.forEach(function (emitter) {
+        emitter.stop(function (err) {
+            if (err) {
+                return done(err);
+            }
 
-    //         ++totalStopped;
+            ++totalStopped;
 
-    //         // if the last emitter was stopped
-    //         if (totalStopped === emitters.length) {
-    //             // reset list and callback
-    //             emitters = [];
-    //             done();
-    //         }
-    //     });
-    // });
-    done();
+            // if the last emitter was stopped
+            if (totalStopped === emitters.length) {
+                // reset list and callback
+                emitters = [];
+                done();
+            }
+        });
+    });
 }
 
 
@@ -66,26 +68,29 @@ describe('Happening', function () {
     afterEach(cleanUp);
 });
 
-setInterval(function () {
-    var mem = process.memoryUsage();
+// setInterval(function () {
+//     var mem = process.memoryUsage();
 
-    console.log(new Date(),
-        'rss:', (mem.rss / 1024 / 1024).toFixed(2) + 'MB',
-        'heapTotal:', (mem.heapTotal / 1024 / 1024).toFixed(2) + 'MB',
-        'heapUsed:', (mem.heapUsed / 1024 / 1024).toFixed(2) + 'MB'
-    );
-}, 10000);
+//     console.log(new Date(),
+//         'rss:', (mem.rss / 1024 / 1024).toFixed(2) + 'MB',
+//         'heapTotal:', (mem.heapTotal / 1024 / 1024).toFixed(2) + 'MB',
+//         'heapUsed:', (mem.heapUsed / 1024 / 1024).toFixed(2) + 'MB'
+//     );
+// }, 10000);
 
 /*
 create
-    with options
-    without options
-    2 with different namespaces
+x    with options
+x    without options
+x    2 with different namespaces
 
 test stop()
 
-emit
-    to single emitter
+x emit
+x    to single emitter
+x    to single emitter with parameters
+        with multiple listeners
+        with multiple listeners on separate events
     to multiple emitters
         all listeners
         only one listener
